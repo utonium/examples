@@ -1,9 +1,12 @@
 /*
- * foo.cpp
+ * coin_die_toss.cpp
  *
- * This is a whiteboard for writing code.
+ * Example code to implement a coin toss function and then build a die toss
+ * function using the coin_toss function.
  *
- * Copyright 2015 Kevin Cureton, all rights reserved.
+ * Further goal of trying out various C++ std library support as much as possible.
+ *
+ * Copyright 2015 Kevin Cureton, under MIT License
  */
 
 
