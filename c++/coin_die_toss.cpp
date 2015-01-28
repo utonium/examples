@@ -11,12 +11,18 @@
  * Includes
  */
 #include <iostream>
+#include <map>
 #include <random>
+#include <string>
 
 /*
  * Globals and prototypes
  */
-enum DICE { d4, d6, d8, d10, d12, d20 };
+// Just for grins, make an enum of die types and a lookup table for
+// how many sides each has. Granted, the enum values could be used,
+// but the goal of this is demo code so go crazy!
+enum DICE { d4=4, d6=6, d8=8, d10=10, d12=12, d20=20 };
+static const std::map<int, std::string> die_name = { {d4, "d4"}, {d6, "d6"}, {d8, "d8"}, {d10, "d10"}, {d12, "d12"}, {d20, "d20"} };
 
 static const std::string usage = "Please specify one of --demo, --coin-test, or --die-test";
 
@@ -40,11 +46,13 @@ int main(int argc, char** argv)
 
     int exit_status = 0;
 
-    if (strcmp(*argv[1], '--demo') == 0) {
+    std::string first_arg = std::string(argv[1]);
+
+    if (first_arg.compare("--demo") == 0) {
         exit_status = demo();
-    } else if (strcmp(*argv[1], '--coin-test') == 0) {
+    } else if (first_arg.compare("--coin-test") == 0) {
         exit_status = testCoinToss();
-    } else if (strcmp(*argv[1], '--die-test') == 0) {
+    } else if (first_arg.compare("--die-test") == 0) {
         exit_status = testDieToss();
     } else {
         std::cout << usage << "\n"; 
@@ -58,7 +66,6 @@ int main(int argc, char** argv)
  */
 int coin_toss()
 {
-
     std::random_device device;
 
     std::default_random_engine dre(device());
@@ -68,44 +75,25 @@ int coin_toss()
 }
 
 /*
- * function to toss a die of a given sidedness.
+ * Function to toss a die of a given sidedness.
  *
  * die: the type of die to toss
  */
-int die_toss(enum DICE die) {
+int die_toss(enum DICE die)
+{
+    int number_of_coin_tosses = die - 1;
 
-    int die_value = 0;
-
-    int number_of_coin_tosses = 0;
-
-    switch(die) {
-        case d4:
-            number_of_coin_tosses = 2;
-            break;
-
-        case d6:
-            number_of_coin_tosses = 3;
-            break;
-
-        case d8:
-            number_of_coin_tosses = 3;
-            break;
-
-        case d10:
-            number_of_coin_tosses = 4;
-            break;
-
-        case d12:
-            number_of_coin_tosses = 4;
-            break;
-
-        case d20:
-            number_of_coin_tosses = 5;
-            break;
-    }
-
-    for (auto i = 0; i < number_of_coin_tosses; i++) {
-
+    // Start die_value with 1. If the coin flips all are 'zero',
+    // then the die value is 1. With all ones, it would be the
+    // max die face since the number of coin tosses is one less
+    // than the number of die faces.
+    int die_value = 1;
+    for (auto idx = 0; idx < number_of_coin_tosses; idx++) {
+        auto result = coin_toss();
+//        std::cout << "XXX: coin result is " << result << "\n";
+        if (result == 1) {
+           die_value++;
+        } 
     }
 
     return die_value;
@@ -127,6 +115,14 @@ int demo()
     std::cout << "    " << coin_toss() << "\n";
 
     std::cout << "Tossing a die...\n";
+    std::cout << "    " << die_name.at(d4) << " value is '" << die_toss(d4) << "'\n";
+    std::cout << "    " << die_name.at(d4) << " value is '" << die_toss(d4) << "'\n";
+    std::cout << "    " << die_name.at(d4) << " value is '" << die_toss(d4) << "'\n";
+    std::cout << "    " << die_name.at(d4) << " value is '" << die_toss(d4) << "'\n";
+    std::cout << "    " << die_name.at(d4) << " value is '" << die_toss(d4) << "'\n";
+    std::cout << "    " << die_name.at(d4) << " value is '" << die_toss(d4) << "'\n";
+    std::cout << "    " << die_name.at(d4) << " value is '" << die_toss(d4) << "'\n";
+    std::cout << "    " << die_name.at(d4) << " value is '" << die_toss(d4) << "'\n";
 
     return 0;
 }
