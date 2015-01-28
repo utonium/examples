@@ -22,8 +22,7 @@
  * Globals and prototypes
  */
 // Just for grins, make an enum of die types and a lookup table for
-// how many sides each has. Granted, the enum values could be used,
-// but the goal of this is demo code so go crazy!
+// the name of each of the dice.
 enum DICE { d4=4, d6=6, d8=8, d10=10, d12=12, d20=20 };
 static const std::map<int, std::string> die_name = { {d4, "d4"}, {d6, "d6"}, {d8, "d8"}, {d10, "d10"}, {d12, "d12"}, {d20, "d20"} };
 
@@ -93,7 +92,6 @@ int die_toss(enum DICE die)
     int die_value = 1;
     for (auto idx = 0; idx < number_of_coin_tosses; idx++) {
         auto result = coin_toss();
-//        std::cout << "XXX: coin result is " << result << "\n";
         if (result == 1) {
            die_value++;
         } 
@@ -177,6 +175,7 @@ int testCoinToss()
 int testDieToss()
 {
     std::cout << "Running die toss tests...\n";
+    std::cout << "\n\nNot Currently Implemented\n";
     
 
     return 0;
