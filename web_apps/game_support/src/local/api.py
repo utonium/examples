@@ -41,11 +41,10 @@ def createUser(request):
     """
     print("LOG: creating new user...")
 
+    errors = list()
     required_params = [
         'first', 'last', 'nickname', 'password',
     ]
-
-    errors = list()
     for required_param in required_params:
         if required_param not in request.POST:
             errors.append("Required parameter, '%s', missing" % required_param)
@@ -62,11 +61,6 @@ def createUser(request):
     nick_name = request.POST['nickname']
     password = request.POST['password']
 
-#    print("DEBUG: first: '%s', '%s'" % (first_name, type(first_name)))
-#    print("DEBUG: last:  '%s', '%s'" % (last_name, type(last_name)))
-#    print("DEBUG: nick:  '%s', '%s'" % (nick_name, type(nick_name)))
-#    print("DEBUG: psswd: '%s', '%s'" % (password, type(password)))
-
     user_uid = None
     try:
         users_stash = local.stash.UsersStash()
@@ -79,6 +73,7 @@ def createUser(request):
         response['msg'] = "Nickname '%s' is already in use, please select another one" % nick_name
         return response
 
+    except local.stash.StashError, e:
     # TODO: This should catch other exceptions from the stash layer, such as not being able
     # to reach the Redis server, etc.
 
@@ -147,6 +142,64 @@ def modifyUser(request):
 
 
 @pyramid.view.view_config(
+    route_name='api.create_battle_log', renderer='json', request_method='POST'
+)
+def createBattleLog(request):
+    """ Create a battle log entry for the user.
+    """
+    print("LOG: creating battle log...")
+
+    if pyramid.security.authenticated_userid(request) is None:
+        print("INFO: Unauthenticated access attempted")
+        response = dict() 
+        response['error'] = True
+        response['time'] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        response['msg'] = "Unauthenticated access attempted, please supply a valid username/password"
+        return response
+
+    errors = list()
+    required_params = [
+        'attacker', 'defender', 'winner', 'start', 'end',
+    ]
+    for required_param in required_params:
+        if required_param not in request.POST:
+            errors.append("Required parameter, '%s', missing" % required_param)
+
+    if len(errors):
+        response = dict() 
+        response['error'] = True
+        response['time'] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        response['msg'] = string.join(errors, "; ")
+        return response
+        
+    attacker_uid = request.POST['attacker']
+    defender_uid = request.POST['defender']
+    winner_uid = request.POST['winner']
+    start_time = request.POST['start']
+    end_time = request.POST['end']
+
+    try:
+        battles_stash = local.stash.BattlesStash()
+        battles_stash.createBattleLog(attacker_uid, defender_uid, winner_uid, start_time, end_time)
+
+    except local.stash.BattlesStashError, e:
+        response = dict() 
+        response['error'] = True
+        response['time'] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        response['msg'] = "Unknown error while attempting to create new battle log"
+        return response
+
+    # TODO: Catch other exceptions here. Probably should have an overall exception handler
+    # to keep all exceptions as internal errors and allow for graceful recovery.
+
+    response = dict()
+    response['error'] = False
+    response['time'] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+    return response
+
+
+@pyramid.view.view_config(
     route_name='api.list_users', renderer='json', request_method='GET'
 )
 def listUsers(request):
@@ -160,18 +213,6 @@ def listUsers(request):
     users_stash = local.stash.UsersStash()
     users = users_stash.getAllUsers()
     return users
-
-
-@pyramid.view.view_config(
-    route_name='api.create_battle_log', renderer='json', request_method='POST'
-)
-def createBattleLog(request):
-    """ Create a battle log entry for the user.
-    """
-    print("LOG: creating battle log...")
-
-    if pyramid.security.authenticated_userid(request) is None:
-        return pyramid.httpexceptions.HTTPUnauthorized()
 
 
 # ---------------------------------------------------------------------------------------------

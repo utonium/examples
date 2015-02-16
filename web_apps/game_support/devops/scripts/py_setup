@@ -1,5 +1,6 @@
 #!/bin/sh
 
+sudo pip install python-dateutil
 sudo pip install nose
 sudo pip install paste
 sudo pip install pyramid

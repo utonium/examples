@@ -18,6 +18,7 @@ Copyright (c) 2015 Kevin Cureton
 # Imports
 # ---------------------------------------------------------------------------------------------
 import datetime
+import dateutil.parser
 import hashlib
 import os
 import random
@@ -184,6 +185,9 @@ class UsersStash(StashCommon):
     def __init__(self):
         super(UsersStash, self).__init__("Users", "26000")
 
+    # ---------------------------------------------------------------
+    # Public methods
+    # ---------------------------------------------------------------
     def createUser(self, first_name, last_name, nick_name, password):
         """ Create a new unique user record. Returns the new user uid.
         """
@@ -274,19 +278,11 @@ class UsersStash(StashCommon):
         """
         self.setUserData(user_uid, USER_ATTR_PASSWORD, new_password)
 
-#        user_key = self._getDatastoreKey(USER_PREFIX, user_uid)
-#        new_salt = self._generateSalt()
-#        new_hashed_password = self._hashPassword(new_salt, new_password)
-#        self._getDatastoreConnection().hset(user_key, USER_ATTR_SALT, new_salt)
-#        self._getDatastoreConnection().hset(user_key, USER_ATTR_PASSWORD, new_hashed_password)
-
     def updateLastSeenForUser(self, user_uid):
         """ Update the last seen attribute for the given user.
         """
         last_seen = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         self.setUserData(user_uid, USER_ATTR_LAST_SEEN, last_seen)
-#        user_key = self._getDatastoreKey(USER_PREFIX, user_uid)
-#        self._getDatastoreConnection().hset(user_key, USER_ATTR_LAST_SEEN, last_seen)
 
     def getUserData(self, user_uid, attribute):
         """ Get the vaule for a given user attribute.
@@ -361,22 +357,57 @@ class BattlesStash(StashCommon):
     def __init__(self):
         super(BattlesStash, self).__init__("Battles", "26010")
 
+    # ---------------------------------------------------------------
+    # Public methods
+    # ---------------------------------------------------------------
     def createBattleLog(self, attacker_uid, defender_uid, winner_uid, start_time, end_time):
         """ Create a new battle log entry.
         """
-        battle_key = self._getDatastoreKey(BATTLE_PREFIX)
-        battle_uid = self._uidFromKey(battle_key)
+        print("DEBUG: Creating new battle log...")
 
+        start_time = self._reformatDate(start_time)
+        end_time = self._reformatDate(end_time)
+
+#        print("DEBUG: Start time is '%s'" % start_time)
+#        print("DEBUG: End time is '%s'" % end_time)
+
+        battle_id = string.join((random.choice(string.ascii_letters) for i in range(20)), "")
+        battle_key = BATTLE_PREFIX + "." + battle_id + "." + start_time + "." + end_time
+#        print("DEBUG: Battle id is '%s'" % battle_id)
+#        print("DEBUG: Battle key is '%s'" % battle_key)
         battle_data = dict()
         battle_data[BATTLE_ATTR_ATTACKER_UID] = attacker_uid
         battle_data[BATTLE_ATTR_DEFENDER_UID] = defender_uid
         battle_data[BATTLE_ATTR_WINNER_UID] = winner_uid
         battle_data[BATTLE_ATTR_BATTLE_START_TIME] = start_time
         battle_data[BATTLE_ATTR_BATTLE_END_TIME] = end_time
-
         self._getDatastoreConnection().hmset(battle_key, battle_data)
 
-        return user_uid
+        # TODO: Update the win and lose counters for the attacker and defenders using
+        # the UsersStash.
+
+
+    def searchBattleLogs(self, start_time, end_time):
+        """ Get the list of battle logs that occur between the start
+            and end times.
+        """
+        print("DEBUG: Searching battle logs...")
+
+        battle_logs = list()
+
+        return battle_logs
+
+
+    # ---------------------------------------------------------------
+    # Protected methods
+    # ---------------------------------------------------------------
+    def _reformatDate(self, in_date):
+        """ Take in a string date and reform it for use as part of a
+            battle log key.
+        """
+        in_dtobj = dateutil.parser.parse(in_date)
+        out_date = in_dtobj.isoformat()
+        return out_date
 
 
 # ---------------------------------------------------------------------------------------------

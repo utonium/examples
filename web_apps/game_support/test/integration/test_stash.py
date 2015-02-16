@@ -77,6 +77,23 @@ def test_updateUsers():
     users_stash.updateUserPassword(helper.TEST_USER_03_UID, "s0m3-n3w-P@55w0rd!-03")
     helper.TEST_USER_03_PASSWORD = "s0m3-n3w-P@55w0rd!-03"
 
+def test_createBattleLogs():
+    """ Test to create a number of battle logs.
+    """
+    print("Executing test_createBattleLogs...")
+    battles_stash = local.stash.BattlesStash()
+
+    battles_stash.createBattleLog(helper.TEST_USER_01_UID, helper.TEST_USER_02_UID,
+                                  helper.TEST_USER_01_UID, "2014-10-31T20:15:35", "2014-10-31T20:43:12")
+    battles_stash.createBattleLog(helper.TEST_USER_01_UID, helper.TEST_USER_03_UID,
+                                  helper.TEST_USER_03_UID, "2014-11-10T11:12:13", "2014-11-10T11:37:53")
+    battles_stash.createBattleLog(helper.TEST_USER_02_UID, helper.TEST_USER_03_UID,
+                                  helper.TEST_USER_03_UID, "2014-11-15T22:13:15", "2014-11-15T23:07:43")
+    battles_stash.createBattleLog(helper.TEST_USER_01_UID, helper.TEST_USER_02_UID,
+                                  helper.TEST_USER_02_UID, "2014-12-25T00:13:22", "2014-12-25T04:20:00")
+    battles_stash.createBattleLog(helper.TEST_USER_01_UID, helper.TEST_USER_03_UID,
+                                  helper.TEST_USER_03_UID, "2014-12-31T23:55:35", "2015-01-01T01:48:33")
+
 def test_removeUsers():
     """ Test to remove users.
     """
