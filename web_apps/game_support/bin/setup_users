@@ -1,0 +1,5 @@
+#!/bin/sh
+
+./user_create --first kevin --last cureton --nick kevtonium
+./user_create --first bob --last smith --nick bobtonium
+./user_create --first ann --last jones --nick anntonium

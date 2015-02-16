@@ -1,0 +1,107 @@
+
+    
+Coding Challenge 
+For your coding challenge, you will create and customer support system for a fictional online game.
+ 
+Our fictional battle game is played online by many players.  Each player has following profile attributes:
+    1. First Name
+    2. Last Name
+    3. Nickname
+    4. Wins
+    5. Losses
+    6. Current Win Streak
+    7. Created
+    8. Last Seen
+ 
+Your mission
+Mission I, Design and implement REST API for following specs:
+    REQUIREMENT: All API requests MUST BE authenticated using simple username/password authentication.
+ 
+    Create User
+        POST    /users
+        parameters:             //Content-Type: application/json
+            {
+                “first”: <first_name>,
+                “last”: <last_name>,
+                “nickname”: <nickname>
+   }
+    response:
+   //Content-Type: application/json
+   {
+        “error”: false,             //success
+        “time”: <timestamp>,
+        “userid”: <userid>          
+   }
+            {
+                “error”: true,              //failure
+                “time”: <timestamp>,
+                “msg”: <error_description>
+   }
+Modify User
+PUT  /users/<userid>
+        parameters:
+        //Content-Type: application/json
+        {
+            “field”: <field_being_modified>,
+            “value”: <new_value>
+   }
+   response:
+            //Content-Type: application/json
+            {
+                “error”: false,                 //success
+                “time”: <timestamp>
+   }
+   {
+    “error”: true,                  //failure
+       “time”: <timestamp>,
+       “msg”: <error_description>
+   }
+    
+    Create Battle Log
+        POST /battles
+        parameters:
+            //Content-Type: application/json
+            {
+                “attacker”: <attacker_userid>,
+                “defender”: <defender_userid>,
+                “winner”: <winner_userid>,
+                “start”: <battle_start_time>,
+                “end”: <battle_end_time>
+  }
+  response:
+        //Content-Type: application/json
+           {
+                “error”: false,                 //success
+                “time”: <timestamp>
+  }
+  {
+    “error”: true,                  //failure
+      “time”: <timestamp>,
+      “msg”: <error_description>
+    }
+ 
+Mission II, Design and implement web application, which reports player data according to following specs:
+    /users/<userid>
+    •   Show user profile data listed above
+ 
+    /users/search?nickname=<nickname>
+    •   Find user by nickname
+    •   redirect to /users/<userid> URL for the user(s) found by search
+ 
+    /battles?start=<starttime>&end=<endtime>
+    •   display battle logs for specified time rage
+ 
+ 
+This is what is expected from this coding challenge:
+    1. Code should be written in PHP or Python
+    2. You may use database of your choice
+    3. Use of 3rd party framework is allowed
+    4. While performance is not critical, you should try to use the BEST practices
+ 
+    Optional Tasks: (But highly recommended)
+    1. Create Unit tests to demonstrate that REST API works correctly
+    2. Install/deployment script for your coding challenge
+    3. use Secure Socket Layer (SSL)
+    
+        
+

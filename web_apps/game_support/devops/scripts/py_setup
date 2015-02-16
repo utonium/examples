@@ -1,0 +1,8 @@
+#!/bin/sh
+
+sudo pip install nose
+sudo pip install paste
+sudo pip install pyramid
+sudo pip install pyramid_jinja2
+sudo pip install redis
+sudo pip install requests

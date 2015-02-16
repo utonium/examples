@@ -1,0 +1,82 @@
+#!/usr/bin/env python
+# ---------------------------------------------------------------------------------------------
+"""
+user_create
+
+Create a new user.
+
+Copyright (c) 2015 Kevin Cureton
+"""
+# ---------------------------------------------------------------------------------------------
+
+# ---------------------------------------------------------------------------------------------
+# Imports
+# ---------------------------------------------------------------------------------------------
+import optparse
+import os
+import sys
+
+SCRIPT_NAME = os.path.normpath(os.path.basename(sys.argv[0]))
+SCRIPT_HOME = os.path.normpath(os.path.dirname(sys.argv[0]))
+sys.path.append(os.path.join(SCRIPT_HOME, "..", "src"))
+
+import local.stash
+
+# ---------------------------------------------------------------------------------------------
+# Globals
+# ---------------------------------------------------------------------------------------------
+EXIT_OK = 0
+EXIT_ERROR = 1
+
+# ---------------------------------------------------------------------------------------------
+# Main
+# ---------------------------------------------------------------------------------------------
+def main():
+    """
+    Please run with --help from the commandline for the usage message.
+    """
+    try:
+        parser = optparse.OptionParser()
+        parser.add_option("--first",
+                          help="new user's first name",
+                          action="store", type="string", dest="first_name")
+        parser.add_option("--last",
+                          help="new user's last name",
+                          action="store", type="string", dest="last_name")
+        parser.add_option("--nick",
+                          help="new user's nick name",
+                          action="store", type="string", dest="nick_name")
+
+        (opts, extras) = parser.parse_args()
+
+        if not opts.first_name:
+            print("Required option '--first' not present")
+            return EXIT_ERROR
+
+        if not opts.last_name:
+            print("Required option '--last' not present")
+            return EXIT_ERROR
+
+        if not opts.nick_name:
+            print("Required option '--nick' not present")
+            return EXIT_ERROR
+
+        print("Creating a new user ...")
+    
+        user_stash = local.stash.UsersStash()
+        user_uid = user_stash.createUser(opts.first_name, opts.last_name, opts.nick_name)
+
+        print("    user added with UID of '%s'" % user_uid)
+
+    except local.stash.UserStashNickNameTakenError, e:
+        print("Nick name has already been taken, try another...")
+        return EXIT_ERROR
+
+    return EXIT_OK
+
+# ---------------------------------------------------------------------------------------------
+# Execute main and exit with the returned status.
+# ---------------------------------------------------------------------------------------------
+if __name__ == "__main__":
+    exit_status = main()
+    sys.exit(exit_status)

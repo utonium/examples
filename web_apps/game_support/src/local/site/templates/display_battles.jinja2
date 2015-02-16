@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <script src="http://angular-ui.github.io/ui-router/release/angular-ui-router.js"></script>
+
+        <link rel="stylesheet" type="text/css" href="/styles/base.css">
+    </head>
+
+    <body>
+        <a href="/"><h2>Home</h2></a>
+
+        <h1>Display Battles</h1>
+        <div class="layout-flow-column">
+            <form action="/battles" method=get>
+                <div class="layout-flow-column">
+                    <label for="start">Start Time:</label>
+                    <input type=text id="start"></input><br>
+                </div> 
+
+                <div class="layout-flow-column">
+                    <label for="end">End Time:</label>
+                    <input type=text id="end"></input><br>
+                </div> 
+
+                <div class="layout-flow-column">
+                    <input type=submit id="submit"></input><br>
+                </div> 
+            </form>
+        </div>
+
+        <hr class="divider">
+
+        // Display the list of battles for the time range.
+
+    </body>
+
+</html>

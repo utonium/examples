@@ -1,0 +1,33 @@
+# ---------------------------------------------------------------------------------------------
+# local.conf.erb
+# 
+# The Apache configuration for this web application
+# 
+# Copyright (c) 2015 Kevin Cureton
+# ---------------------------------------------------------------------------------------------
+
+<Directory /var/www/code>
+    Options FollowSymLinks
+    Order allow,deny
+    Allow from all
+    AllowOverride AuthConfig
+</Directory>
+
+#<Location />
+#    AuthType basic
+#    AuthName "API Realm"
+#    Require valid-user
+#</Location>
+
+<VirtualHost *:80>
+    ServerName localhost
+    Redirect / https://localhost/
+</VirtualHost>
+
+<VirtualHost *:443>
+    WSGIScriptAlias / /var/www/code/site/main.prod.wsgi
+    ServerName localhost
+    SSLEngine on
+    SSLCertificateFile /etc/httpd/ssl/apache.crt
+    SSLCertificateKeyFile /etc/httpd/ssl/apache.key
+</VirtualHost>

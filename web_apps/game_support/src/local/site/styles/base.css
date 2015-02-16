@@ -1,0 +1,62 @@
+/*
+ * base.css
+ *
+ * CSS relating to the entire site.
+ *
+ * Copyright 2015 Kevin Cureton
+ *
+ */
+
+
+/*
+ * Form styling.
+ */
+form {
+    width: 300px;
+    /*
+    margin: 0 auto;
+    padding: 1em;
+    border: 1px solid #CCC;
+    border-radius: 1em;
+    */
+}
+
+/*
+ * Styled divider
+ *
+ * <hr class="divider">
+ */
+.divider {
+    border-top: 1px solid #ABAA9A;
+    clear: both;
+} 
+
+/*
+ * Flexible box macros
+ */
+.layout-flow-row {
+    display: -webkit-flex;
+    -webkit-flex-flow: row;
+    display: flex;
+    flex-flow: row;
+}
+
+.layout-flow-column {
+    display: -webkit-flex;
+    -webkit-flex-flow: column;
+    display: flex;
+    flex-flow: column;
+}
+
+.layout-flow-row-wrap {
+    display: -webkit-flex;
+    -webkit-flex-flow: row;
+    display: flex;
+    flex-flow: row;
+    flex-wrap: wrap;
+}
+
+.layout-equal-sized-items {
+    -webkit-flex-grow: 1;
+    flex-grow: 1;
+}

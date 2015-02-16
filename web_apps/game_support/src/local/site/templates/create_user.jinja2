@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <link rel="stylesheet" type="text/css" href="/styles/base.css">
+    </head>
+
+    <body>
+        <a href="/"><h2>Home</h2></a>
+
+        <h1>Create New User</h1>
+        <div class="layout-flow-column">
+            <form action="/api/users" method="post">
+                <div class="layout-flow-column">
+                    <label for="first_name">First Name:</label>
+                    <input type=text id="first_name"></input><br>
+                </div>
+
+                <div class="layout-flow-column">
+                    <label for="last_name">Last Name:</label>
+                    <input type=text id="last_name"></input><br>
+                </div>
+
+                <div class="layout-flow-column">
+                    <label for="nick_name">Nick Name:</label>
+                    <input type=text id="nick_name"></input><br>
+                </div>
+
+                <div class="layout-flow-column">
+                    <label for="password">Password:</label>
+                    <input type=password id="password"></input><br>
+                </div>
+
+                <div class="layout-flow-column">
+                    <label for="confirm_password">Confirm Password:</label>
+                    <input type=password id="confirm_password"></input><br>
+                </div>
+
+                <div class="layout-flow-column">
+                    <input type=submit id="submit"></input><br>
+                </div>
+            </form>
+        </div>
+
+        <hr class="divider">
+
+        // Display an errors with user creation here.
+
+    </body>
+
+</html>
