@@ -248,15 +248,6 @@ class UsersStash(StashCommon):
             user_uid = self._getDatastoreConnection().hget(USER_NICK_NAMES_TO_UID, nick_name)
         return user_uid
 
-    def updateUserPassword(self, user_uid, new_password):
-        """ Update the user's password.
-        """
-        user_key = self._getDatastoreKey(USER_PREFIX, user_uid)
-        new_salt = self._generateSalt()
-        new_hashed_password = self._hashPassword(new_salt, new_password)
-        self._getDatastoreConnection().hset(user_key, USER_ATTR_SALT, new_salt)
-        self._getDatastoreConnection().hset(user_key, USER_ATTR_PASSWORD, new_hashed_password)
-
     def authenticatedUserByNickname(self, nick_name, incoming_password):
         """ Given the user's nick name and password, authenticate the user
             and return the user's uid.
@@ -278,6 +269,25 @@ class UsersStash(StashCommon):
         else:
             return None
 
+    def updateUserPassword(self, user_uid, new_password):
+        """ Update the user's password.
+        """
+        self.setUserData(user_uid, USER_ATTR_PASSWORD, new_password)
+
+#        user_key = self._getDatastoreKey(USER_PREFIX, user_uid)
+#        new_salt = self._generateSalt()
+#        new_hashed_password = self._hashPassword(new_salt, new_password)
+#        self._getDatastoreConnection().hset(user_key, USER_ATTR_SALT, new_salt)
+#        self._getDatastoreConnection().hset(user_key, USER_ATTR_PASSWORD, new_hashed_password)
+
+    def updateLastSeenForUser(self, user_uid):
+        """ Update the last seen attribute for the given user.
+        """
+        last_seen = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        self.setUserData(user_uid, USER_ATTR_LAST_SEEN, last_seen)
+#        user_key = self._getDatastoreKey(USER_PREFIX, user_uid)
+#        self._getDatastoreConnection().hset(user_key, USER_ATTR_LAST_SEEN, last_seen)
+
     def getUserData(self, user_uid, attribute):
         """ Get the vaule for a given user attribute.
         """
@@ -298,13 +308,19 @@ class UsersStash(StashCommon):
         if attribute not in USER_ATTRS:
             raise UsersStashInvalidAttributeError()
 
+        user_key = self._getDatastoreKey(USER_PREFIX, user_uid)
+        if attribute == USER_ATTR_PASSWORD:
+            new_salt = self._generateSalt()
+            new_hashed_password = self._hashPassword(new_salt, value)
+            self._getDatastoreConnection().hset(user_key, USER_ATTR_SALT, new_salt)
+            self._getDatastoreConnection().hset(user_key, USER_ATTR_PASSWORD, new_hashed_password)
+        else:
+            self._getDatastoreConnection().hset(user_key, attribute, value)
+
         # TODO: Nickname updates will need to update the overall list that maps
         # from nickname to uid.
         # or
         # TODO: Don't allow nicknames to be updated.
-
-        user_key = self._getDatastoreKey(USER_PREFIX, user_uid)
-        self._getDatastoreConnection().hset(user_key, attribute, value)
 
     def unsetUserData(self, user_uid, attribute):
         """ Unset the vaule for a given user attribute.
@@ -316,13 +332,6 @@ class UsersStash(StashCommon):
 
         user_key = self._getDatastoreKey(USER_PREFIX, user_uid)
         self._getDatastoreConnection().hdel(user_key, attribute)
-
-    def updateLastSeenForUser(self, user_uid):
-        """ Update the last seen attribute for the given user.
-        """
-        user_key = self._getDatastoreKey(USER_PREFIX, user_uid)
-        last_seen = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        self._getDatastoreConnection().hset(user_key, USER_ATTR_LAST_SEEN, last_seen)
 
     # ---------------------------------------------------------------
     # Protected methods

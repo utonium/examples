@@ -48,23 +48,19 @@ def test_createUsers():
                                                      helper.TEST_USER_01_LAST_NAME,
                                                      helper.TEST_USER_01_NICK_NAME,
                                                      helper.TEST_USER_01_PASSWORD)
-    print("Test user 01 uid is '%s'" % helper.TEST_USER_01_UID)
-    nose.tools.assert_is_not_none(helper.TEST_USER_01_UID)
+    nose.tools.assert_not_equal(helper.TEST_USER_01_UID, None)
 
     helper.TEST_USER_02_UID = users_stash.createUser(helper.TEST_USER_02_FIRST_NAME,
                                                      helper.TEST_USER_02_LAST_NAME,
                                                      helper.TEST_USER_02_NICK_NAME,
                                                      helper.TEST_USER_02_PASSWORD)
-    print("Test user 02 uid is '%s'" % helper.TEST_USER_02_UID)
-    nose.tools.assert_is_not_none(helper.TEST_USER_02_UID)
+    nose.tools.assert_not_equal(helper.TEST_USER_02_UID, None)
 
     helper.TEST_USER_03_UID = users_stash.createUser(helper.TEST_USER_03_FIRST_NAME,
                                                      helper.TEST_USER_03_LAST_NAME,
                                                      helper.TEST_USER_03_NICK_NAME,
                                                      helper.TEST_USER_03_PASSWORD)
-    print("Test user 03 uid is '%s'" % helper.TEST_USER_03_UID)
-    nose.tools.assert_is_not_none(helper.TEST_USER_03_UID)
-
+    nose.tools.assert_not_equal(helper.TEST_USER_03_UID, None)
 
 def test_updateUsers():
     """ Test to update existing users.
@@ -72,15 +68,14 @@ def test_updateUsers():
     print("Executing test_updateUsers...")
     users_stash = local.stash.UsersStash()
 
+    users_stash.updateUserPassword(helper.TEST_USER_01_UID, "s0m3-n3w-P@55w0rd!-01")
     helper.TEST_USER_01_PASSWORD = "s0m3-n3w-P@55w0rd!-01"
-    users_stash.updateUserPassword(helper.TEST_USER_01_UID, helper.TEST_USER_01_PASSWORD)
 
+    users_stash.updateUserPassword(helper.TEST_USER_02_UID, "s0m3-n3w-P@55w0rd!-02")
     helper.TEST_USER_02_PASSWORD = "s0m3-n3w-P@55w0rd!-02"
-    users_stash.updateUserPassword(helper.TEST_USER_02_UID, helper.TEST_USER_02_PASSWORD)
 
+    users_stash.updateUserPassword(helper.TEST_USER_03_UID, "s0m3-n3w-P@55w0rd!-03")
     helper.TEST_USER_03_PASSWORD = "s0m3-n3w-P@55w0rd!-03"
-    users_stash.updateUserPassword(helper.TEST_USER_03_UID, helper.TEST_USER_03_PASSWORD)
-
 
 def test_removeUsers():
     """ Test to remove users.

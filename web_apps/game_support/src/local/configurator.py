@@ -46,25 +46,13 @@ class CustomAuthPolicy(object):
         user_uid = self._authenticateCredentials(request)
         return user_uid
 
-#        credentials = self._getRequestCredentials(request)
-#        if credentials is None:
-#            return None
-#        login_name = credentials['login']
-#        if self._validateCredentials(credentials, request) is not None:
-#            users_stash = local.stash.UsersStash()
-#            authenticated = users_stash.authenticatedUser(login_name, password)
-#            return login_name
-
     def effective_principals(self, request):
         print("DEBUG: In effective_principals...")
-
         effective_principals = [ pyramid.security.Everyone ]
-
         user_uid = self._authenticateCredentials(request)
         if user_uid:
             effective_principals.append(pyramid.security.Authenticated)
             effective_principals.append(user_uid)
-
         return effective_principals
 
     def unauthenticated_userid(self, request):
@@ -92,6 +80,7 @@ class CustomAuthPolicy(object):
         """
         credentials = self._getRequestCredentials(request)
         if credentials:
+            print("CREDENTIALS: '%s', '%s'" % (credentials['login'], credentials['password']))
             users_stash = local.stash.UsersStash()
             user_uid = users_stash.authenticatedUser(credentials['login'], credentials['password'])
             return user_uid
@@ -125,20 +114,6 @@ class CustomAuthPolicy(object):
 
         else:
             return None
-
-#    def _validateCredentials(credentials, request):
-#        """ Validate the user credentials against the Users stash.
-#        """
-#        login_name = credentials['login']
-#        password = credentials['password']
-#
-#        users_stash = local.stash.UsersStash()
-#        authenticated = users_stash.authenticatedUser(login_name, password)
-#        if authenticated:
-#            return [ 'api' ]
-#        else:
-#            return None
-
 
 
 def getPyramidConfigurator(is_dev_server=False):

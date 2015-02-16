@@ -107,29 +107,37 @@ def test_updateUserPasswords():
     print("Executing test_updateUserPasswords...")
 
     url = "http://localhost:8080/api/users/"
-    new_password = "P@55w0rd!"
+    new_password = "s0m3-n3w-P@55w0rd!-"
+
     payload = {
       "field" : "password",
-      "value" : new_password,
+      "value" : new_password + "01",
     }
-
     req = requests.put(url + helper.TEST_USER_01_UID,
                        data=payload, auth=(helper.TEST_USER_01_UID, helper.TEST_USER_01_PASSWORD))
     result = req.json()
     nose.tools.assert_false(result['error'])
-    helper.TEST_USER_01_PASSWORD = new_password
+    helper.TEST_USER_01_PASSWORD = new_password + "01"
 
+    payload = {
+      "field" : "password",
+      "value" : new_password + "02",
+    }
     req = requests.put(url + helper.TEST_USER_02_UID,
                        data=payload, auth=(helper.TEST_USER_02_UID, helper.TEST_USER_02_PASSWORD))
     result = req.json()
     nose.tools.assert_false(result['error'])
-    helper.TEST_USER_02_PASSWORD = new_password
+    helper.TEST_USER_02_PASSWORD = new_password + "02"
 
+    payload = {
+      "field" : "password",
+      "value" : new_password + "03",
+    }
     req = requests.put(url + helper.TEST_USER_03_UID,
                        data=payload, auth=(helper.TEST_USER_03_UID, helper.TEST_USER_03_PASSWORD))
     result = req.json()
     nose.tools.assert_false(result['error'])
-    helper.TEST_USER_03_PASSWORD = new_password
+    helper.TEST_USER_03_PASSWORD = new_password + "03"
 
 def test_updateOtherUserAttributes01():
     """ Test to update other user attributes.
@@ -138,7 +146,7 @@ def test_updateOtherUserAttributes01():
 
     url = "http://localhost:8080/api/users/"
     payload = {
-      "field" : "first",
+      "field" : "first_name",
       "value" : "kev",
     }
     req = requests.put(url + helper.TEST_USER_01_UID,
@@ -153,7 +161,7 @@ def test_updateOtherUserAttributes02():
 
     url = "http://localhost:8080/api/users/"
     payload = {
-      "field" : "last",
+      "field" : "last_name",
       "value" : "cureton-lemberg",
     }
     req = requests.put(url + helper.TEST_USER_01_UID,

@@ -106,25 +106,18 @@ def modifyUser(request):
         response['msg'] = "Unauthenticated access attempted, please supply a valid username/password"
         return response
 
-    print("------>>>> " + str(request.matchdict))
-    print("------>>>> " + str(request.POST))
-
     user_uid = request.matchdict['user_id']
     attribute = request.POST['field']
     value = request.POST['value']
 
     # Block certain attributes from being updated directly by this
     # interface.
-    blocked_attributes = [
-        local.stash.USER_ATTR_UID,
-        local.stash.USER_ATTR_SALT,
-        local.stash.USER_ATTR_WINS,
-        local.stash.USER_ATTR_LOSES,
-        local.stash.USER_ATTR_CURRENT_WIN_STREAK,
-        local.stash.USER_ATTR_CREATED,
-        local.stash.USER_ATTR_LAST_SEEN
+    valid_attributes = [
+        local.stash.USER_ATTR_FIRST_NAME,
+        local.stash.USER_ATTR_LAST_NAME,
+        local.stash.USER_ATTR_PASSWORD,
     ]
-    if attribute in blocked_attributes:
+    if attribute not in valid_attributes:
         response = dict() 
         response['error'] = True
         response['time'] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -134,7 +127,7 @@ def modifyUser(request):
     try:
         users_stash = local.stash.UsersStash()
         users_stash.setUserData(user_uid, attribute, value)
-        users_stash.updateLastSeen(user_uid)
+        users_stash.updateLastSeenForUser(user_uid)
 
     except local.stash.UsersStashInvalidAttributeError, e:
         response = dict() 
