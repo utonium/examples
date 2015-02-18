@@ -13,7 +13,6 @@ Copyright (c) 2015 Kevin Cureton
 # Imports
 # ---------------------------------------------------------------------------------------------
 import os
-import nose.plugins.skip
 import nose.tools
 import sys
 
@@ -24,7 +23,7 @@ import local.stash
 # ---------------------------------------------------------------------------------------------
 # Globals
 # ---------------------------------------------------------------------------------------------
-TEST_NAME = "test_stash"
+TEST_NAME = "test_0001_stash"
 
 
 # ---------------------------------------------------------------------------------------------
@@ -33,10 +32,10 @@ TEST_NAME = "test_stash"
 def setup():
     print("%s setup..." % TEST_NAME)
 
-
 def teardown():
     print("%s teardown..." % TEST_NAME)
 
+    # TODO: Remove the created battle logs
 
 def test_createUsers():
     """ Test to create new users.

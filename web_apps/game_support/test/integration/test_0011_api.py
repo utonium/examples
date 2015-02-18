@@ -12,14 +12,10 @@ Copyright (c) 2015 Kevin Cureton
 # ---------------------------------------------------------------------------------------------
 # Imports
 # ---------------------------------------------------------------------------------------------
-import json
 import os
-import nose.plugins.skip
 import nose.tools
-import sys
 import requests
-import urllib
-import urllib2
+import sys
 
 import helper
 import local.stash
@@ -28,7 +24,7 @@ import local.stash
 # ---------------------------------------------------------------------------------------------
 # Globals
 # ---------------------------------------------------------------------------------------------
-TEST_NAME = "test_stash"
+TEST_NAME = "test_0011_api"
 
 
 # ---------------------------------------------------------------------------------------------
@@ -37,10 +33,10 @@ TEST_NAME = "test_stash"
 def setup():
     print("%s setup..." % TEST_NAME)
 
-
 def teardown():
     print("%s teardown..." % TEST_NAME)
 
+    # TODO: Remove the created battle logs
 
 def test_createUsers():
     """ Test to create new users.
@@ -83,7 +79,6 @@ def test_createUsers():
     nose.tools.assert_false(result_02['error'])
     nose.tools.assert_false(result_03['error'])
 
-
 def test_unauthenticatedAccess():
     """ Test to verify unauthenicated access doesn't work.
     """
@@ -99,7 +94,6 @@ def test_unauthenticatedAccess():
                        data=payload, auth=(helper.TEST_USER_01_UID, "some_bogus_password"))
     result = req.json()
     nose.tools.assert_true(result['error'])
-
 
 def test_updateUserPasswords():
     """ Test to update user passwords.
