@@ -74,8 +74,11 @@ def createUser(request):
         return response
 
     except local.stash.StashError, e:
-    # TODO: This should catch other exceptions from the stash layer, such as not being able
-    # to reach the Redis server, etc.
+        response = dict() 
+        response['error'] = True
+        response['time'] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        response['msg'] = "Unspecified issue accessing user stash"
+        return response
 
     response = dict()
     response['error'] = False
