@@ -1,4 +1,4 @@
-devops README
+game\_support README
 ====================
 
 Prerequisites
@@ -18,8 +18,8 @@ downloading of Chef cookbooks. Run the following in a Terminal shell
 
     gem install librarian
 
-# TODO: Could libararian be installed with vagrant. It was aggressive
-# about things, but that could be doable now.
+TODO: Could libararian be installed with vagrant. It was aggressive
+about managing cookbooks, but that could be doable now.
 
 Installation
 --------------------
