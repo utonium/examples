@@ -189,9 +189,6 @@ def test_createBattleLogs():
     """
     print("Executing test_createBattleLogs...")
 
-    # TODO: Create the battle logs using the API instead of directly
-    # with the stash.
-
     url = "http://localhost:8080/api/battles"
 
     payload = {
@@ -201,9 +198,9 @@ def test_createBattleLogs():
       "start" : "2014-10-31T20:15:35",
       "end" : "2014-10-31T20:43:12",
     }
-    req = requests.put(url, data=payload, auth=(helper.TEST_USER_01_UID, helper.TEST_USER_01_PASSWORD))
+    req = requests.post(url, data=payload, auth=(helper.TEST_USER_01_UID, helper.TEST_USER_01_PASSWORD))
     result = req.json()
-    nose.tools.assert_true(result['error'])
+    nose.tools.assert_false(result['error'])
 
     payload = {
       "attacker" : helper.TEST_USER_01_UID,
@@ -212,9 +209,9 @@ def test_createBattleLogs():
       "start" : "2014-11-10T11:12:13",
       "end" : "2014-11-10T11:37:53",
     }
-    req = requests.put(url, data=payload, auth=(helper.TEST_USER_03_UID, helper.TEST_USER_03_PASSWORD))
+    req = requests.post(url, data=payload, auth=(helper.TEST_USER_03_UID, helper.TEST_USER_03_PASSWORD))
     result = req.json()
-    nose.tools.assert_true(result['error'])
+    nose.tools.assert_false(result['error'])
 
     payload = {
       "attacker" : helper.TEST_USER_02_UID,
@@ -223,9 +220,9 @@ def test_createBattleLogs():
       "start" : "2014-11-15T22:13:15",
       "end" : "2014-11-15T23:07:43",
     }
-    req = requests.put(url, data=payload, auth=(helper.TEST_USER_02_UID, helper.TEST_USER_02_PASSWORD))
+    req = requests.post(url, data=payload, auth=(helper.TEST_USER_02_UID, helper.TEST_USER_02_PASSWORD))
     result = req.json()
-    nose.tools.assert_true(result['error'])
+    nose.tools.assert_false(result['error'])
 
     payload = {
       "attacker" : helper.TEST_USER_01_UID,
@@ -234,9 +231,9 @@ def test_createBattleLogs():
       "start" : "2014-12-25T00:13:22",
       "end" : "2014-12-25T04:20:00",
     }
-    req = requests.put(url, data=payload, auth=(helper.TEST_USER_01_UID, helper.TEST_USER_01_PASSWORD))
+    req = requests.post(url, data=payload, auth=(helper.TEST_USER_01_UID, helper.TEST_USER_01_PASSWORD))
     result = req.json()
-    nose.tools.assert_true(result['error'])
+    nose.tools.assert_false(result['error'])
 
     payload = {
       "attacker" : helper.TEST_USER_01_UID,
@@ -245,10 +242,9 @@ def test_createBattleLogs():
       "start" : "2014-12-31T23:55:35",
       "end" : "2015-01-01T01:48:33",
     }
-    req = requests.put(url, data=payload, auth=(helper.TEST_USER_01_UID, helper.TEST_USER_01_PASSWORD))
+    req = requests.post(url, data=payload, auth=(helper.TEST_USER_01_UID, helper.TEST_USER_01_PASSWORD))
     result = req.json()
-    nose.tools.assert_true(result['error'])
-
+    nose.tools.assert_false(result['error'])
 
 def test_removeUsers():
     """ Test to remove users.
