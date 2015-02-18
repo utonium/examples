@@ -191,7 +191,7 @@ class UsersStash(StashCommon):
     def createUser(self, first_name, last_name, nick_name, password):
         """ Create a new unique user record. Returns the new user uid.
         """
-        print("DEBUG: Creating user ('%s', '%s', '%s')..." % (first_name, last_name, nick_name))
+        #print("DEBUG: Creating user ('%s', '%s', '%s')..." % (first_name, last_name, nick_name))
 
         if self._getDatastoreConnection().hexists(USER_NICK_NAMES_TO_UID, nick_name):
             msg = "Nick name already in use"
@@ -228,7 +228,7 @@ class UsersStash(StashCommon):
     def removeUser(self, user_uid):
         """ Remove the specified user.
         """
-        print("DEBUG: Removing user '%s'..." % (user_uid))
+        #print("DEBUG: Removing user '%s'..." % (user_uid))
 
         user_key = self._getDatastoreKey(USER_PREFIX, user_uid)
         nick_name = self._getDatastoreConnection().hget(user_key, USER_ATTR_NICK_NAME)
@@ -287,7 +287,7 @@ class UsersStash(StashCommon):
     def getUserData(self, user_uid, attribute):
         """ Get the vaule for a given user attribute.
         """
-        print("DEBUG: Getting user data (%s, %s)..." % (user_uid, attribute))
+        #print("DEBUG: Getting user data (%s, %s)..." % (user_uid, attribute))
 
         if attribute not in USER_ATTRS:
             raise UsersStashInvalidAttributeError()
@@ -299,7 +299,7 @@ class UsersStash(StashCommon):
     def setUserData(self, user_uid, attribute, value):
         """ Set the vaule for a given user attribute.
         """
-        print("DEBUG: Setting user data (%s, %s, %s)..." % (user_uid, attribute, value))
+        #print("DEBUG: Setting user data (%s, %s, %s)..." % (user_uid, attribute, value))
 
         if attribute not in USER_ATTRS:
             raise UsersStashInvalidAttributeError()
@@ -321,7 +321,7 @@ class UsersStash(StashCommon):
     def unsetUserData(self, user_uid, attribute):
         """ Unset the vaule for a given user attribute.
         """
-        print("DEBUG: Unsetting user data (%s, %s)..." % (user_uid, attribute))
+        #print("DEBUG: Unsetting user data (%s, %s)..." % (user_uid, attribute))
 
         if attribute not in USER_ATTRS:
             raise UsersStashInvalidAttributeError()
@@ -363,18 +363,13 @@ class BattlesStash(StashCommon):
     def createBattleLog(self, attacker_uid, defender_uid, winner_uid, start_time, end_time):
         """ Create a new battle log entry.
         """
-        print("DEBUG: Creating new battle log...")
+        #print("DEBUG: Creating new battle log...")
 
         start_time = self._reformatDate(start_time)
         end_time = self._reformatDate(end_time)
 
-#        print("DEBUG: Start time is '%s'" % start_time)
-#        print("DEBUG: End time is '%s'" % end_time)
-
         battle_id = string.join((random.choice(string.ascii_letters) for i in range(20)), "")
         battle_key = BATTLE_PREFIX + "." + battle_id + "." + start_time + "." + end_time
-#        print("DEBUG: Battle id is '%s'" % battle_id)
-#        print("DEBUG: Battle key is '%s'" % battle_key)
         battle_data = dict()
         battle_data[BATTLE_ATTR_ATTACKER_UID] = attacker_uid
         battle_data[BATTLE_ATTR_DEFENDER_UID] = defender_uid
