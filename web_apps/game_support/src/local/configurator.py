@@ -42,12 +42,12 @@ class CustomAuthPolicy(object):
     # Pyramid auth policy methods
     # ---------------------------------------------------------------
     def authenticated_userid(self, request):
-        print("DEBUG: In authenticated_userid...")
+        #print("DEBUG: In authenticated_userid...")
         user_uid = self._authenticateCredentials(request)
         return user_uid
 
     def effective_principals(self, request):
-        print("DEBUG: In effective_principals...")
+        #print("DEBUG: In effective_principals...")
         effective_principals = [ pyramid.security.Everyone ]
         user_uid = self._authenticateCredentials(request)
         if user_uid:
@@ -56,7 +56,7 @@ class CustomAuthPolicy(object):
         return effective_principals
 
     def unauthenticated_userid(self, request):
-        print("DEBUG: In unauthenticated_userid...")
+        #print("DEBUG: In unauthenticated_userid...")
         credentials = self._getRequestCredentials(request)
         if credentials is not None:
             return credentials['login']
@@ -64,11 +64,11 @@ class CustomAuthPolicy(object):
             return None
 
     def remember(self, request, principal, **kw):
-        print("DEBUG: In remember...")
+        #print("DEBUG: In remember...")
         return []
 
     def forget(self, request):
-        print("DEBUG: In forget...")
+        #print("DEBUG: In forget...")
         head = paste.httpheaders.WWW_AUTHENTICATE.tuples('Basic realm="%s"' % self.realm)
         return head
 
@@ -80,7 +80,6 @@ class CustomAuthPolicy(object):
         """
         credentials = self._getRequestCredentials(request)
         if credentials:
-            print("CREDENTIALS: '%s', '%s'" % (credentials['login'], credentials['password']))
             users_stash = local.stash.UsersStash()
             user_uid = users_stash.authenticatedUser(credentials['login'], credentials['password'])
             return user_uid
