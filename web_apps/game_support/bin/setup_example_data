@@ -1,5 +1,113 @@
-#!/bin/sh
+#!/usr/bin/env python
+# ---------------------------------------------------------------------------------------------
+"""
+setup_example_data
 
-./user_create --first kevin --last cureton --nick kevtonium
-./user_create --first bob --last smith --nick bobtonium
-./user_create --first ann --last jones --nick anntonium
+Create example data for the game support system so that the web pages can produce interesting
+results.
+
+Copyright (c) 2015 Kevin Cureton
+"""
+# ---------------------------------------------------------------------------------------------
+
+# ---------------------------------------------------------------------------------------------
+# Imports
+# ---------------------------------------------------------------------------------------------
+import datetime
+import optparse
+import os
+import random
+import sys
+
+SCRIPT_NAME = os.path.normpath(os.path.basename(sys.argv[0]))
+SCRIPT_HOME = os.path.normpath(os.path.dirname(sys.argv[0]))
+sys.path.append(os.path.join(SCRIPT_HOME, "..", "src"))
+
+import local.stash
+
+# ---------------------------------------------------------------------------------------------
+# Globals
+# ---------------------------------------------------------------------------------------------
+EXIT_OK = 0
+EXIT_ERROR = 1
+
+BATTLE_LOG_COUNT = 20
+
+# ---------------------------------------------------------------------------------------------
+# Main
+# ---------------------------------------------------------------------------------------------
+def main():
+    """
+    Please run with --help from the commandline for the usage message.
+    """
+    try:
+        parser = optparse.OptionParser()
+        (opts, extras) = parser.parse_args()
+
+        print("Setting up example data...")
+    
+        user_uids = list()
+        users_stash = local.stash.UsersStash()
+        user_uids.append(users_stash.createUser("bob", "smith", "bobtonium", "someboguspassword"))
+        user_uids.append(users_stash.createUser("sue", "doe", "suetonium", "someboguspassword"))
+        user_uids.append(users_stash.createUser("ann", "jones", "anntonium", "someboguspassword"))
+        user_uids.append(users_stash.createUser("fred", "flintstone", "freddy", "someboguspassword"))
+        user_uids.append(users_stash.createUser("barney", "rubble", "barne", "someboguspassword"))
+        user_uids.append(users_stash.createUser("Elbert", "Shagglesworth", "shaggy", "someboguspassword"))
+        user_uids.append(users_stash.createUser("Scoobert", "Doo", "scooby", "someboguspassword"))
+
+        battles_stash = local.stash.BattlesStash()
+
+        random.seed(datetime.datetime.now())
+
+        for idx in xrange(0, BATTLE_LOG_COUNT):
+            # Pick the attacker uid
+            attacker_uid = random.choice(user_uids)
+
+            # Pick the defender uid
+            defender_uid = random.choice(user_uids)
+            while True:
+                if defender_uid != attacker_uid:
+                    break
+                defender_uid = random.choice(user_uids)
+
+            # Randomly pick the winner of the two
+            winner = random.choice([0, 1])
+            if winner:
+                winner_uid = defender_uid
+            else:
+                winner_uid = attacker_uid
+
+            # Bound the example data battles to a minimum duration
+            # and a maximum duration.
+            min_end_time_delta = 15 
+            max_end_time_delta = 60 * 60 * 24 * 7
+
+            # Generate start and end time
+            start_time = datetime.datetime.utcnow()
+            battle_duration = datetime.timedelta(0, random.randrange(min_end_time_delta,
+                                                                     max_end_time_delta))
+            end_time = start_time + battle_duration
+
+            battles_stash.createBattleLog(attacker_uid,
+                                          defender_uid,
+                                          winner_uid,
+                                          start_time.strftime("%Y-%m-%dT%H:%M:%S"),
+                                          end_time.strftime("%Y-%m-%dT%H:%M:%S"))
+
+    except local.stash.UsersStashError, e:
+        print("Error creating example user, exiting...")
+        return EXIT_ERROR
+
+    except local.stash.BattlesStashError, e:
+        print("Error creating example battle log, exiting...")
+        return EXIT_ERROR
+
+    return EXIT_OK
+
+# ---------------------------------------------------------------------------------------------
+# Execute main and exit with the returned status.
+# ---------------------------------------------------------------------------------------------
+if __name__ == "__main__":
+    exit_status = main()
+    sys.exit(exit_status)
