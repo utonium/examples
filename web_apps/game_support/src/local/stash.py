@@ -186,7 +186,7 @@ class UsersStash(StashCommon):
         super(UsersStash, self).__init__("Users", "26000")
 
     # ---------------------------------------------------------------
-    # Public methods
+    # User creation/removal
     # ---------------------------------------------------------------
     def createUser(self, first_name, last_name, nick_name, password):
         """ Create a new unique user record. Returns the new user uid.
@@ -238,6 +238,9 @@ class UsersStash(StashCommon):
         self._getDatastoreConnection().hdel(USER_NICK_NAMES_TO_UID, nick_name)
         self._getDatastoreConnection().delete(user_key)
 
+    # ---------------------------------------------------------------
+    # Getting users
+    # ---------------------------------------------------------------
     def getAllUsers(self):
         """ Return a list of all user uids.
         """
@@ -252,6 +255,9 @@ class UsersStash(StashCommon):
             user_uid = self._getDatastoreConnection().hget(USER_NICK_NAMES_TO_UID, nick_name)
         return user_uid
 
+    # ---------------------------------------------------------------
+    # Authenticating users
+    # ---------------------------------------------------------------
     def authenticatedUserByNickname(self, nick_name, incoming_password):
         """ Given the user's nick name and password, authenticate the user
             and return the user's uid.
@@ -273,6 +279,27 @@ class UsersStash(StashCommon):
         else:
             return None
 
+    # ---------------------------------------------------------------
+    # Custom update user attributes methods
+    # ---------------------------------------------------------------
+    def incrementUserWins(self, user_uid):
+        """ Increment the user's win counter.
+        """
+        user_key = self._getDatastoreKey(USER_PREFIX, user_uid)
+        self._getDatastoreConnection().hincrby(user_key, USER_ATTR_WINS)
+
+        # Bump up the current win streak as well.
+        self._getDatastoreConnection().hincrby(user_key, USER_ATTR_CURRENT_WIN_STREAK)
+
+    def incrementUserLoses(self, user_uid):
+        """ Increment the user's loses counter.
+        """
+        user_key = self._getDatastoreKey(USER_PREFIX, user_uid)
+        self._getDatastoreConnection().hincrby(user_key, USER_ATTR_LOSES)
+
+        # Reset the current win streak back to zero. Wah-wah!
+        self._getDatastoreConnection().hset(user_key, USER_ATTR_CURRENT_WIN_STREAK, 0)
+
     def updateUserPassword(self, user_uid, new_password):
         """ Update the user's password.
         """
@@ -284,6 +311,9 @@ class UsersStash(StashCommon):
         last_seen = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         self.setUserData(user_uid, USER_ATTR_LAST_SEEN, last_seen)
 
+    # ---------------------------------------------------------------
+    # General update user attributes methods
+    # ---------------------------------------------------------------
     def getUserData(self, user_uid, attribute):
         """ Get the vaule for a given user attribute.
         """
@@ -365,6 +395,10 @@ class BattlesStash(StashCommon):
         """
         #print("DEBUG: Creating new battle log...")
 
+        loser_uid = attacker_uid
+        if attacker_uid == winner_uid:
+            loser_uid = defender_uid
+
         start_time = self._reformatDate(start_time)
         end_time = self._reformatDate(end_time)
 
@@ -374,12 +408,20 @@ class BattlesStash(StashCommon):
         battle_data[BATTLE_ATTR_ATTACKER_UID] = attacker_uid
         battle_data[BATTLE_ATTR_DEFENDER_UID] = defender_uid
         battle_data[BATTLE_ATTR_WINNER_UID] = winner_uid
+
+        # TODO: Whether or not to store these as separate attributes in the hash
+        # (which does take up space) or let them come from the key name. Leaning
+        # to key name due to the space issue. At scale that becomes a non-trivial
+        # problem. Sharding on the keys eventually (based on the time, assuming
+        # access patterns favor newer information over older).
         battle_data[BATTLE_ATTR_BATTLE_START_TIME] = start_time
         battle_data[BATTLE_ATTR_BATTLE_END_TIME] = end_time
         self._getDatastoreConnection().hmset(battle_key, battle_data)
 
-        # TODO: Update the win and lose counters for the attacker and defenders using
-        # the UsersStash.
+        # Update the win and lose counters for the attacker and defender.
+        users_stash = UsersStash()
+        users_stash.incrementUserWins(winner_uid)
+        users_stash.incrementUserLoses(loser_uid)
 
 
     def searchBattleLogs(self, start_time, end_time):
@@ -430,7 +472,7 @@ class UsersStashInvalidAttributeError(UsersStashError):
     pass
 
 # Battle stash errors
-class BattleStashError(StashError):
+class BattlesStashError(StashError):
     pass
 
 
