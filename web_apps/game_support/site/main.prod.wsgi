@@ -19,9 +19,7 @@ import pyramid.config
 # ---------------------------------------------------------------
 # Configure the Python environment
 # ---------------------------------------------------------------
-SCRIPT_NAME = os.path.normpath(os.path.basename(sys.argv[0]))
-SCRIPT_HOME = os.path.normpath(os.path.dirname(sys.argv[0]))
-sys.path.append(os.path.join(SCRIPT_HOME, "..", "src"))
+sys.path.append("/var/www/code/src"))
 
 import local.configurator
 
