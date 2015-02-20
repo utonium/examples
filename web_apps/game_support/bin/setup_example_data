@@ -59,6 +59,7 @@ def main():
         battles_stash = local.stash.BattlesStash()
 
         random.seed(datetime.datetime.now())
+        start_time = datetime.datetime.utcnow()
 
         for idx in xrange(0, BATTLE_LOG_COUNT):
             # Pick the attacker uid
@@ -84,15 +85,16 @@ def main():
             max_end_time_delta = 60 * 60 * 24 * 7
 
             # Generate start and end time
-            start_time = datetime.datetime.utcnow()
+            new_start_time = start_time + datetime.timedelta(0, random.randrange(min_end_time_delta,
+                                                                             max_end_time_delta * 52))
             battle_duration = datetime.timedelta(0, random.randrange(min_end_time_delta,
                                                                      max_end_time_delta))
-            end_time = start_time + battle_duration
+            end_time = new_start_time + battle_duration
 
             battles_stash.createBattleLog(attacker_uid,
                                           defender_uid,
                                           winner_uid,
-                                          start_time.strftime("%Y-%m-%dT%H:%M:%S"),
+                                          new_start_time.strftime("%Y-%m-%dT%H:%M:%S"),
                                           end_time.strftime("%Y-%m-%dT%H:%M:%S"))
 
     except local.stash.UsersStashError, e:
