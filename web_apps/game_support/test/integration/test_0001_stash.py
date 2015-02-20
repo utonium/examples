@@ -103,7 +103,7 @@ def test_removeUsers():
     users_stash.removeUser(helper.TEST_USER_02_UID)
     users_stash.removeUser(helper.TEST_USER_03_UID)
 
-    all_users = users_stash.getAllUsers()
+    all_users = users_stash.getAllUserUids()
     nose.tools.assert_equal(len(all_users), 0)
 
 # ---------------------------------------------------------------------------------------------

@@ -241,11 +241,21 @@ class UsersStash(StashCommon):
     # ---------------------------------------------------------------
     # Getting users
     # ---------------------------------------------------------------
-    def getAllUsers(self):
+    def getAllUserUids(self):
         """ Return a list of all user uids.
         """
-        all_users = self._getDatastoreConnection().hvals(USER_NICK_NAMES_TO_UID)
-        return all_users
+        # TODO: Returning this won't scale well as the total number of users
+        # gets large. This will need to return an iterator.
+        all_user_uids = self._getDatastoreConnection().hvals(USER_NICK_NAMES_TO_UID)
+        return all_user_uids
+
+    def getAllUserNicknames(self):
+        """ Return a list of all user uids.
+        """
+        # TODO: Returning this won't scale well as the total number of users
+        # gets large. This will need to return an iterator.
+        all_nicknames = self._getDatastoreConnection().hkeys(USER_NICK_NAMES_TO_UID)
+        return all_nicknames
 
     def getUserIdFromNickName(self, nick_name):
         """ Get the user's uid given their nick name.
@@ -254,6 +264,24 @@ class UsersStash(StashCommon):
         if self._getDatastoreConnection().hexists(USER_NICK_NAMES_TO_UID, nick_name):
             user_uid = self._getDatastoreConnection().hget(USER_NICK_NAMES_TO_UID, nick_name)
         return user_uid
+
+    def searchUsers(self, search_nickname):
+        """ Return a list of all user uids that match against the partial nickname.
+        """
+        # TODO: Scrub the incoming search_nickname. The odds of something bad in this
+        # are low since it is a matching expression, but frankly you never know how the
+        # underlying implementation is built.
+
+        print("DEBUG: Searching users stash for '%s'..." % search_nickname)
+        users = dict()
+        iterator = self._getDatastoreConnection().hscan_iter(USER_NICK_NAMES_TO_UID, match="*" + search_nickname + "*")
+        while True:
+            try:
+                nick_name, user_uid = iterator.next()
+                users[nick_name] = user_uid
+            except StopIteration:
+                break
+        return users
 
     # ---------------------------------------------------------------
     # Authenticating users
