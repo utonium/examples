@@ -1,0 +1,11 @@
+#!/bin/sh
+
+# This is the set of commands that was used to generate the self-signed certificate
+# for Apache.
+
+#cd /etc/httpd/ssl
+#openssl genrsa -des3 -out apache.key 1024
+#openssl req -new -key apache.key -out apache.csr
+#cp apache.key apache.key.org
+#openssl rsa -in apache.key.org -out apache.key 
+#openssl x509 -req -days 365 -in apache.csr -signkey apache.key -out apache.crt
