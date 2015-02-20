@@ -6,6 +6,8 @@
 # Copyright (c) 2015 Kevin Cureton
 # ---------------------------------------------------------------------------------------------
 
+LoadModule ssl_module modules/mod_ssl.so
+
 <Directory /var/www/code>
     Options FollowSymLinks
     Order allow,deny
@@ -20,13 +22,13 @@
 #</Location>
 
 <VirtualHost *:80>
-    ServerName localhost
+    ServerName localhost.localdomain
     Redirect / https://localhost/
 </VirtualHost>
 
 <VirtualHost *:443>
     WSGIScriptAlias / /var/www/code/site/main.prod.wsgi
-    ServerName localhost
+    ServerName localhost.localdomain
     SSLEngine on
     SSLCertificateFile /etc/httpd/ssl/apache.crt
     SSLCertificateKeyFile /etc/httpd/ssl/apache.key
