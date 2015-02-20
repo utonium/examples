@@ -238,6 +238,15 @@ class UsersStash(StashCommon):
         self._getDatastoreConnection().hdel(USER_NICK_NAMES_TO_UID, nick_name)
         self._getDatastoreConnection().delete(user_key)
 
+    def getUserInfo(self, user_uid):
+        """ Get information about a user.
+        """
+        user_key = self._getDatastoreKey(USER_PREFIX, user_uid)
+        user_info = self._getDatastoreConnection().hgetall(user_key)
+        del user_info[USER_ATTR_PASSWORD]
+        del user_info[USER_ATTR_SALT]
+        return user_info
+
     # ---------------------------------------------------------------
     # Getting users
     # ---------------------------------------------------------------
