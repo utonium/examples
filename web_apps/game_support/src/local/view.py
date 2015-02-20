@@ -109,6 +109,8 @@ def displayBattlesPage(request):
     results['error'] = ""
     results['initial_start_time'] = ""
     results['initial_end_time'] = ""
+    results['start_time'] = ""
+    results['end_time'] = ""
     results['logs'] = list()
 
     if 'start_time' not in request.GET or request.GET['start_time'] == "":
@@ -129,20 +131,30 @@ def displayBattlesPage(request):
         start_time = request.GET['start_time']
         end_time = request.GET['end_time']
 
-        # TODO: Use this to map from UID to nickname.
+        results['start_time'] = start_time
+        results['end_time'] = end_time
+
+        # Use this to map from UID to nickname.
         users_stash = local.stash.UsersStash()
 
-        battles_stash = local.stash.BattlesStash()
-        battle_logs = battles_stash.searchBattleLogs(start_time, end_time)
+        try:
+            battles_stash = local.stash.BattlesStash()
+            battle_logs = battles_stash.searchBattleLogs(start_time, end_time)
+            for battle_log in battle_logs:
+                tmp = dict()
+                tmp['attacker_nick_name'] = users_stash.getNickNameFromUserId(battle_log['attacker_uid'])
+                tmp['defender_nick_name'] = users_stash.getNickNameFromUserId(battle_log['defender_uid'])
+                tmp['winner_nick_name'] = users_stash.getNickNameFromUserId(battle_log['winner_uid'])
+                tmp['battle_start_time'] = battle_log['battle_start_time']
+                tmp['battle_end_time'] = battle_log['battle_end_time']
+                results['logs'].append(tmp)
 
-        for battle_log in battle_logs:
-            tmp = dict()
-            tmp['attacker_nick_name'] = battle_log['attacker_uid']
-            tmp['defender_nick_name'] = battle_log['defender_uid']
-            tmp['winner_nick_name'] = battle_log['winner_uid']
-            tmp['battle_start_time'] = battle_log['battle_start_time']
-            tmp['battle_end_time'] = battle_log['battle_end_time']
-            results['logs'].append(tmp)
+        except local.stash.BattlesStashStartDateNotBeforeEndData, e:
+            print("Should be reporting an error")
+            results = dict()
+            results['initial_start_time'] = start_time
+            results['initial_end_time'] = end_time
+            results['error'] = "Start time is needs to be before the end time."
 
     response = pyramid.renderers.render_to_response("local:site/templates/display_battles.jinja2",
                                                     results,

@@ -29,6 +29,13 @@
             </form>
         </div>
 
+        <h2>{{ error }}</h2>
+
+        <hr class="divider">
+
+        Start time was {{ start_time }}<br>
+        End time was {{ end_time }}<br>
+
         <hr class="divider">
 
         {% for log in logs %}
