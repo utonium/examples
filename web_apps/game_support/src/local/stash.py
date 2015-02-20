@@ -465,9 +465,22 @@ class BattlesStash(StashCommon):
         """ Get the list of battle logs that occur between the start
             and end times.
         """
-        print("DEBUG: Searching battle logs...")
+        print("DEBUG: Searching for battle logs between %s and %s..." % (start_time, end_time))
+
+        start_time = self._reformatDate(start_time)
+        end_time = self._reformatDate(end_time)
 
         battle_logs = list()
+
+        match_string = "*"
+        iterator = self._getDatastoreConnection().scan_iter(match=match_string)
+        while True:
+            try:
+                battle_log_key = iterator.next()
+                battle_log_info = self._getDatastoreConnection().hgetall(battle_log_key)
+                battle_logs.append(battle_log_info)
+            except StopIteration:
+                break
 
         return battle_logs
 

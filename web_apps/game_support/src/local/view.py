@@ -125,18 +125,24 @@ def displayBattlesPage(request):
         if 'end_time' in request.GET:
             results['initial_end_time'] = request.GET['end_time']
 
-    battles_stash = local.stash.BattlesStash()
+    else:
+        start_time = request.GET['start_time']
+        end_time = request.GET['end_time']
 
-    # TODO: Search the battle logs for things that fit into the requested times.
+        # TODO: Use this to map from UID to nickname.
+        users_stash = local.stash.UsersStash()
 
-    for idx in xrange(0, 30):
-        tmp = dict()
-        tmp['attacker_nick_name'] = "foo"
-        tmp['defender_nick_name'] = "foo"
-        tmp['winner_nick_name'] = "foo"
-        tmp['battle_start_time'] = "foo"
-        tmp['battle_end_time'] = "foo"
-        results['logs'].append(tmp)
+        battles_stash = local.stash.BattlesStash()
+        battle_logs = battles_stash.searchBattleLogs(start_time, end_time)
+
+        for battle_log in battle_logs:
+            tmp = dict()
+            tmp['attacker_nick_name'] = battle_log['attacker_uid']
+            tmp['defender_nick_name'] = battle_log['defender_uid']
+            tmp['winner_nick_name'] = battle_log['winner_uid']
+            tmp['battle_start_time'] = battle_log['battle_start_time']
+            tmp['battle_end_time'] = battle_log['battle_end_time']
+            results['logs'].append(tmp)
 
     response = pyramid.renderers.render_to_response("local:site/templates/display_battles.jinja2",
                                                     results,
