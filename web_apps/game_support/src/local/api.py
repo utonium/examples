@@ -104,7 +104,7 @@ def modifyUser(request):
         response['msg'] = "Unauthenticated access attempted, please supply a valid username/password"
         return response
 
-    user_uid = request.matchdict['user_id']
+    user_uid = request.matchdict['user_uid']
     attribute = request.POST['field']
     value = request.POST['value']
 
