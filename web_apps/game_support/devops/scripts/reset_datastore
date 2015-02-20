@@ -1,0 +1,4 @@
+#!/bin/sh
+
+/usr/local/bin/redis-cli -p 26000 flushall
+/usr/local/bin/redis-cli -p 26010 flushall
