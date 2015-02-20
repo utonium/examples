@@ -8,8 +8,15 @@
     <body>
         <a href="/"><h2>Home</h2></a>
 
-        <h1>{{ user.nickname }}'s Page</h1>
+        <h1>{{ user.nick_name }}'s Page</h1>
 
+        Real Name is {{ user.first_name }} {{ user.last_name }}<br>
+        User Unique Id is {{ user.uid }}<br>
+        Total Wins: {{ user.wins }}<br>
+        Total Losses: {{ user.loses }}<br>
+        Current Win Streak: {{ user.current_win_streak }}<br>
+        Created: {{ user.created }}<br>
+        Last Seen: {{ user.last_seen }}<br>
 
     </body>
 </html>
