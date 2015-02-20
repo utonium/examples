@@ -19,7 +19,7 @@ import pyramid.config
 # ---------------------------------------------------------------
 # Configure the Python environment
 # ---------------------------------------------------------------
-sys.path.append("/var/www/code/src"))
+sys.path.append("/var/www/code/src")
 
 import local.configurator
 
