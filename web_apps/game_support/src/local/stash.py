@@ -45,7 +45,7 @@ USER_ATTR_NICK_NAME = "nick_name"
 USER_ATTR_PASSWORD = "password"
 USER_ATTR_SALT = "pw_salt"
 USER_ATTR_WINS = "wins"
-USER_ATTR_LOSES = "loses"
+USER_ATTR_LOSSES = "loses"
 USER_ATTR_CURRENT_WIN_STREAK = "current_win_streak"
 USER_ATTR_CREATED = "created"
 USER_ATTR_LAST_SEEN = "last_seen"
@@ -57,7 +57,7 @@ USER_ATTRS = [
     USER_ATTR_PASSWORD,
     USER_ATTR_SALT,
     USER_ATTR_WINS,
-    USER_ATTR_LOSES,
+    USER_ATTR_LOSSES,
     USER_ATTR_CURRENT_WIN_STREAK,
     USER_ATTR_CREATED,
     USER_ATTR_LAST_SEEN,
@@ -213,7 +213,7 @@ class UsersStash(StashCommon):
         user_data[USER_ATTR_SALT] = salt
         user_data[USER_ATTR_PASSWORD] = hashed_password
         user_data[USER_ATTR_WINS] = 0
-        user_data[USER_ATTR_LOSES] = 0
+        user_data[USER_ATTR_LOSSES] = 0
         user_data[USER_ATTR_CURRENT_WIN_STREAK] = 0
         user_data[USER_ATTR_CREATED] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         user_data[USER_ATTR_LAST_SEEN] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -274,6 +274,12 @@ class UsersStash(StashCommon):
             user_uid = self._getDatastoreConnection().hget(USER_NICK_NAMES_TO_UID, nick_name)
         return user_uid
 
+    def getNickNameFromUserId(self, user_uid):
+        """ Get the nick name given user's uid.
+        """
+        nick_name = self.getUserData(user_uid, USER_ATTR_NICK_NAME)
+        return nick_name
+
     def searchUsers(self, search_nickname):
         """ Return a list of all user uids that match against the partial nickname.
         """
@@ -281,7 +287,7 @@ class UsersStash(StashCommon):
         # are low since it is a matching expression, but frankly you never know how the
         # underlying implementation is built.
 
-        print("DEBUG: Searching users stash for '%s'..." % search_nickname)
+        #print("DEBUG: Searching users stash for '%s'..." % search_nickname)
         users = dict()
         iterator = self._getDatastoreConnection().hscan_iter(USER_NICK_NAMES_TO_UID, match="*" + search_nickname + "*")
         while True:
@@ -332,7 +338,7 @@ class UsersStash(StashCommon):
         """ Increment the user's loses counter.
         """
         user_key = self._getDatastoreKey(USER_PREFIX, user_uid)
-        self._getDatastoreConnection().hincrby(user_key, USER_ATTR_LOSES)
+        self._getDatastoreConnection().hincrby(user_key, USER_ATTR_LOSSES)
 
         # Reset the current win streak back to zero. Wah-wah!
         self._getDatastoreConnection().hset(user_key, USER_ATTR_CURRENT_WIN_STREAK, 0)
@@ -451,6 +457,8 @@ class BattlesStash(StashCommon):
         # to key name due to the space issue. At scale that becomes a non-trivial
         # problem. Sharding on the keys eventually (based on the time, assuming
         # access patterns favor newer information over older).
+        # or
+        # Store the battle logs in a relational database.
         battle_data[BATTLE_ATTR_BATTLE_START_TIME] = start_time
         battle_data[BATTLE_ATTR_BATTLE_END_TIME] = end_time
         self._getDatastoreConnection().hmset(battle_key, battle_data)
@@ -465,24 +473,51 @@ class BattlesStash(StashCommon):
         """ Get the list of battle logs that occur between the start
             and end times.
         """
-        print("DEBUG: Searching for battle logs between %s and %s..." % (start_time, end_time))
+        #print("DEBUG: Searching for battle logs between %s and %s..." % (start_time, end_time))
 
-        start_time = self._reformatDate(start_time)
-        end_time = self._reformatDate(end_time)
+        start_dtobj = dateutil.parser.parse(start_time)
+        end_dtobj = dateutil.parser.parse(end_time)
+
+        if not start_dtobj < end_dtobj:
+            raise BattlesStashStartDateNotBeforeEndData()
+
+        start_year = start_dtobj.year
+        start_month = start_dtobj.month
+        start_day = start_dtobj.day
+
+        # TODO: Build a better match string. Really though, the battle logs should probably
+        # be stored someplace other than Redis given the nature of how they are used. I'd
+        # probably stick an AMQP system in place to receive incoming battle log messages and
+        # warehouse them asynchronously.
+        match_string = "*"
 
         battle_logs = list()
-
-        match_string = "*"
         iterator = self._getDatastoreConnection().scan_iter(match=match_string)
         while True:
             try:
                 battle_log_key = iterator.next()
-                battle_log_info = self._getDatastoreConnection().hgetall(battle_log_key)
-                battle_logs.append(battle_log_info)
+                tmp_1, tmp_2, battle_start_time, battle_end_time = string.split(battle_log_key, ".")
+
+                battle_start_dtobj = dateutil.parser.parse(battle_start_time)
+                battle_end_dtobj = dateutil.parser.parse(battle_end_time)
+
+                should_include_log = False
+                if start_dtobj < battle_start_dtobj and battle_start_dtobj < end_dtobj:
+                    should_include_log = True
+                elif start_dtobj < battle_end_dtobj and battle_end_dtobj < end_dtobj:
+                    should_include_log = True
+
+                if should_include_log:
+                    battle_log_info = self._getDatastoreConnection().hgetall(battle_log_key)
+                    battle_logs.append(battle_log_info)
+
             except StopIteration:
                 break
 
         return battle_logs
+
+#        start_time = self._reformatDate(start_time)
+#        end_time = self._reformatDate(end_time)
 
 
     # ---------------------------------------------------------------
@@ -525,6 +560,8 @@ class UsersStashInvalidAttributeError(UsersStashError):
 class BattlesStashError(StashError):
     pass
 
+class BattlesStashStartDateNotBeforeEndData(StashError):
+    pass
 
 # ---------------------------------------------------------------------------------------------
 # Module test harness
