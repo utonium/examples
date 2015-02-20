@@ -15,12 +15,12 @@
             <form action="/battles" method=get>
                 <div class="layout-flow-column">
                     <label for="start">Start Time:</label>
-                    <input type=text id="start"></input><br>
+                    <input type=text name="start_time" autofocus="true" required="true" value="{{ initial_start_time }}" /><br>
                 </div> 
 
                 <div class="layout-flow-column">
                     <label for="end">End Time:</label>
-                    <input type=text id="end"></input><br>
+                    <input type=text name="end_time" required="true" value="{{ initial_end_time }}" /><br>
                 </div> 
 
                 <div class="layout-flow-column">
@@ -31,7 +31,14 @@
 
         <hr class="divider">
 
-        // Display the list of battles for the time range.
+        {% for log in logs %}
+            Attacker {{ log.attacker_nick_name }}<br>
+            Defender {{ log.defender_nick_name }}<br>
+            Winner {{ log.winner_nick_name }}<br>
+            Battle Start {{ log.battle_start_time }}<br>
+            Battle End {{ log.battle_end_time }}<br>
+            <hr class="divider">
+        {% endfor %}
 
     </body>
 

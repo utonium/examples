@@ -103,10 +103,43 @@ def searchForUsers(request):
 def displayBattlesPage(request):
     """ The page for displaying battles.
     """
-    # TODO: Get the url parameters for start and end times.
+    print("DEBUG: Displaying battle logs...")
+
+    results = dict()
+    results['error'] = ""
+    results['initial_start_time'] = ""
+    results['initial_end_time'] = ""
+    results['logs'] = list()
+
+    if 'start_time' not in request.GET or request.GET['start_time'] == "":
+        results['error'] = "Please specify a start time for displaying battle logs."
+
+    if 'end_time' not in request.GET or request.GET['end_time'] == "":
+        results['error'] = "Please specify a end time for displaying battle logs."
+
+    if results['error']:
+        # Send back the entered start and end times since there was an error.
+        if 'start_time' in request.GET:
+            results['initial_start_time'] = request.GET['start_time']
+
+        if 'end_time' in request.GET:
+            results['initial_end_time'] = request.GET['end_time']
+
+    battles_stash = local.stash.BattlesStash()
+
+    # TODO: Search the battle logs for things that fit into the requested times.
+
+    for idx in xrange(0, 30):
+        tmp = dict()
+        tmp['attacker_nick_name'] = "foo"
+        tmp['defender_nick_name'] = "foo"
+        tmp['winner_nick_name'] = "foo"
+        tmp['battle_start_time'] = "foo"
+        tmp['battle_end_time'] = "foo"
+        results['logs'].append(tmp)
 
     response = pyramid.renderers.render_to_response("local:site/templates/display_battles.jinja2",
-                                                    dict(),
+                                                    results,
                                                     request=request)
     return response
 
