@@ -140,11 +140,12 @@ def getPyramidConfigurator(is_dev_server=False):
     config.add_route('index', '/')
     config.add_route('view.create_user', pattern='/users/create')
     config.add_route('view.search_users', pattern='/users/search')
+    config.add_route('view.display_user', pattern='/users/{user_uid}')
     config.add_route('view.display_battles', pattern='/battles')
 
     # Setup the APIs.
     config.add_route('api.create_user', pattern='/api/users')
-    config.add_route('api.modify_user', pattern='/api/users/{user_id}')
+    config.add_route('api.modify_user', pattern='/api/users/{user_uid}')
     config.add_route('api.create_battle_log', pattern='/api/battles')
     config.add_route('api.list_users', pattern='/api/list_users')
 
