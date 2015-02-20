@@ -47,11 +47,19 @@ def createNewUserPage(request):
     return response
 
 
-@pyramid.view.view_config(route_name='view.create_user', request_method='GET')
+@pyramid.view.view_config(route_name='view.display_user', request_method='GET')
 def displayUserPage(request):
     """ Display a detail page about a user.
     """
+    user_uid = request.matchdict['user_uid']
+
     results = dict()
+    results['error'] = ""
+
+    users_stash = local.stash.UsersStash()
+    user_info = users_stash.getUserInfo(user_uid)
+
+    results['user'] = user_info
 
     response = pyramid.renderers.render_to_response("local:site/templates/user_detail.jinja2",
                                                     results,
