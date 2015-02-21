@@ -1,7 +1,6 @@
-#!/bin/tcsh
+#!/bin/sh
 
-set test_bin_dir = `dirname $0`
+test_bin_dir=`dirname $0`
 
 ${test_bin_dir}/test_unit $*
-
 ${test_bin_dir}/test_integration $*
