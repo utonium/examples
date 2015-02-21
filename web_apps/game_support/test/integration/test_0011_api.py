@@ -26,6 +26,8 @@ import local.stash
 # ---------------------------------------------------------------------------------------------
 TEST_NAME = "test_0011_api"
 
+#SERVER_ADDRESS = "10.0.0.10"
+SERVER_ADDRESS = "localhost:8080"
 
 # ---------------------------------------------------------------------------------------------
 # Functions
@@ -43,7 +45,7 @@ def test_createUsers():
     """
     print("Executing test_createUsers...")
 
-    url = 'http://localhost:8080/api/users'
+    url = "http://%s/api/users" % SERVER_ADDRESS
 
     payload = {
       'first' : helper.TEST_USER_01_FIRST_NAME,
@@ -51,7 +53,7 @@ def test_createUsers():
       'nickname' : helper.TEST_USER_01_NICK_NAME,
       'password' : helper.TEST_USER_01_PASSWORD,
     }
-    req = requests.post(url, data=payload)
+    req = requests.post(url, data=payload, verify=False)
     result_01 = req.json()
     helper.TEST_USER_01_UID = result_01['userid']
 
@@ -61,7 +63,7 @@ def test_createUsers():
       'nickname' : helper.TEST_USER_02_NICK_NAME,
       'password' : helper.TEST_USER_02_PASSWORD,
     }
-    req = requests.post(url, data=payload)
+    req = requests.post(url, data=payload, verify=False)
     result_02 = req.json()
     helper.TEST_USER_02_UID = result_02['userid']
 
@@ -71,7 +73,7 @@ def test_createUsers():
       'nickname' : helper.TEST_USER_03_NICK_NAME,
       'password' : helper.TEST_USER_03_PASSWORD,
     }
-    req = requests.post(url, data=payload)
+    req = requests.post(url, data=payload, verify=False)
     result_03 = req.json()
     helper.TEST_USER_03_UID = result_03['userid']
 
@@ -84,14 +86,14 @@ def test_unauthenticatedAccess():
     """
     print("Executing test_unauthenticatedAccess...")
 
-    url = "http://localhost:8080/api/users/"
+    url = "http://%s/api/users/" % SERVER_ADDRESS
     payload = {
       "field" : "first",
       "value" : "grumpy",
     }
 
     req = requests.put(url + helper.TEST_USER_01_UID,
-                       data=payload, auth=(helper.TEST_USER_01_UID, "some_bogus_password"))
+                       data=payload, auth=(helper.TEST_USER_01_UID, "some_bogus_password"), verify=False)
     result = req.json()
     nose.tools.assert_true(result['error'])
 
@@ -100,7 +102,7 @@ def test_updateUserPasswords():
     """
     print("Executing test_updateUserPasswords...")
 
-    url = "http://localhost:8080/api/users/"
+    url = "http://%s/api/users/" % SERVER_ADDRESS
     new_password = "s0m3-n3w-P@55w0rd!-"
 
     payload = {
@@ -108,7 +110,7 @@ def test_updateUserPasswords():
       "value" : new_password + "01",
     }
     req = requests.put(url + helper.TEST_USER_01_UID,
-                       data=payload, auth=(helper.TEST_USER_01_UID, helper.TEST_USER_01_PASSWORD))
+                       data=payload, auth=(helper.TEST_USER_01_UID, helper.TEST_USER_01_PASSWORD), verify=False)
     result = req.json()
     nose.tools.assert_false(result['error'])
     helper.TEST_USER_01_PASSWORD = new_password + "01"
@@ -118,7 +120,7 @@ def test_updateUserPasswords():
       "value" : new_password + "02",
     }
     req = requests.put(url + helper.TEST_USER_02_UID,
-                       data=payload, auth=(helper.TEST_USER_02_UID, helper.TEST_USER_02_PASSWORD))
+                       data=payload, auth=(helper.TEST_USER_02_UID, helper.TEST_USER_02_PASSWORD), verify=False)
     result = req.json()
     nose.tools.assert_false(result['error'])
     helper.TEST_USER_02_PASSWORD = new_password + "02"
@@ -128,7 +130,7 @@ def test_updateUserPasswords():
       "value" : new_password + "03",
     }
     req = requests.put(url + helper.TEST_USER_03_UID,
-                       data=payload, auth=(helper.TEST_USER_03_UID, helper.TEST_USER_03_PASSWORD))
+                       data=payload, auth=(helper.TEST_USER_03_UID, helper.TEST_USER_03_PASSWORD), verify=False)
     result = req.json()
     nose.tools.assert_false(result['error'])
     helper.TEST_USER_03_PASSWORD = new_password + "03"
@@ -138,13 +140,13 @@ def test_updateOtherUserAttributes01():
     """
     print("Executing test_updateOtherUserAttributes01...")
 
-    url = "http://localhost:8080/api/users/"
+    url = "http://%s/api/users/" % SERVER_ADDRESS
     payload = {
       "field" : "first_name",
       "value" : "kev",
     }
     req = requests.put(url + helper.TEST_USER_01_UID,
-                       data=payload, auth=(helper.TEST_USER_01_UID, helper.TEST_USER_01_PASSWORD))
+                       data=payload, auth=(helper.TEST_USER_01_UID, helper.TEST_USER_01_PASSWORD), verify=False)
     result = req.json()
     nose.tools.assert_false(result['error'])
 
@@ -153,13 +155,13 @@ def test_updateOtherUserAttributes02():
     """
     print("Executing test_updateOtherUserAttributes02...")
 
-    url = "http://localhost:8080/api/users/"
+    url = "http://%s/api/users/" % SERVER_ADDRESS
     payload = {
       "field" : "last_name",
       "value" : "cureton-lemberg",
     }
     req = requests.put(url + helper.TEST_USER_01_UID,
-                       data=payload, auth=(helper.TEST_USER_01_UID, helper.TEST_USER_01_PASSWORD))
+                       data=payload, auth=(helper.TEST_USER_01_UID, helper.TEST_USER_01_PASSWORD), verify=False)
     result = req.json()
     nose.tools.assert_false(result['error'])
 
@@ -168,13 +170,13 @@ def test_updateOtherUserAttributes03():
     """
     print("Executing test_updateOtherUserAttributes03...")
 
-    url = "http://localhost:8080/api/users/"
+    url = "http://%s/api/users/" % SERVER_ADDRESS
     payload = {
       "field" : "wins",
       "value" : "1000000",
     }
     req = requests.put(url + helper.TEST_USER_01_UID,
-                       data=payload, auth=(helper.TEST_USER_01_UID, helper.TEST_USER_01_PASSWORD))
+                       data=payload, auth=(helper.TEST_USER_01_UID, helper.TEST_USER_01_PASSWORD), verify=False)
     result = req.json()
     nose.tools.assert_true(result['error'])
 
@@ -183,7 +185,7 @@ def test_createBattleLogs():
     """
     print("Executing test_createBattleLogs...")
 
-    url = "http://localhost:8080/api/battles"
+    url = "http://%s/api/battles" % SERVER_ADDRESS
 
     payload = {
       "attacker" : helper.TEST_USER_01_UID,
@@ -192,7 +194,7 @@ def test_createBattleLogs():
       "start" : "2014-10-31T20:15:35",
       "end" : "2014-10-31T20:43:12",
     }
-    req = requests.post(url, data=payload, auth=(helper.TEST_USER_01_UID, helper.TEST_USER_01_PASSWORD))
+    req = requests.post(url, data=payload, auth=(helper.TEST_USER_01_UID, helper.TEST_USER_01_PASSWORD), verify=False)
     result = req.json()
     nose.tools.assert_false(result['error'])
 
@@ -203,7 +205,7 @@ def test_createBattleLogs():
       "start" : "2014-11-10T11:12:13",
       "end" : "2014-11-10T11:37:53",
     }
-    req = requests.post(url, data=payload, auth=(helper.TEST_USER_03_UID, helper.TEST_USER_03_PASSWORD))
+    req = requests.post(url, data=payload, auth=(helper.TEST_USER_03_UID, helper.TEST_USER_03_PASSWORD), verify=False)
     result = req.json()
     nose.tools.assert_false(result['error'])
 
@@ -214,7 +216,7 @@ def test_createBattleLogs():
       "start" : "2014-11-15T22:13:15",
       "end" : "2014-11-15T23:07:43",
     }
-    req = requests.post(url, data=payload, auth=(helper.TEST_USER_02_UID, helper.TEST_USER_02_PASSWORD))
+    req = requests.post(url, data=payload, auth=(helper.TEST_USER_02_UID, helper.TEST_USER_02_PASSWORD), verify=False)
     result = req.json()
     nose.tools.assert_false(result['error'])
 
@@ -225,7 +227,7 @@ def test_createBattleLogs():
       "start" : "2014-12-25T00:13:22",
       "end" : "2014-12-25T04:20:00",
     }
-    req = requests.post(url, data=payload, auth=(helper.TEST_USER_01_UID, helper.TEST_USER_01_PASSWORD))
+    req = requests.post(url, data=payload, auth=(helper.TEST_USER_01_UID, helper.TEST_USER_01_PASSWORD), verify=False)
     result = req.json()
     nose.tools.assert_false(result['error'])
 
@@ -236,7 +238,7 @@ def test_createBattleLogs():
       "start" : "2014-12-31T23:55:35",
       "end" : "2015-01-01T01:48:33",
     }
-    req = requests.post(url, data=payload, auth=(helper.TEST_USER_01_UID, helper.TEST_USER_01_PASSWORD))
+    req = requests.post(url, data=payload, auth=(helper.TEST_USER_01_UID, helper.TEST_USER_01_PASSWORD), verify=False)
     result = req.json()
     nose.tools.assert_false(result['error'])
 
