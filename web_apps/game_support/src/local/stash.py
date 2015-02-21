@@ -106,10 +106,11 @@ class StashCommon(object):
         self.__datastore_name = datastore_name
         self.__datastore_port = datastore_port
 
-        # TODO: Supply this value from a higher level in case we want to run Redis
-        # on it's own node. That would also allow for multiple web servers running this
-        # code since they would all coordinate via the backend Redis.
-        self.__datastore_server = "localhost"
+        # TODO: Supply this value from a higher level (read config file install by Chef)
+        # in case we want to run Redis on it's own node. That would also allow for multiple
+        # web servers running this code since they would all coordinate via the backend Redis.
+        # For now hardcode it to the IP address we're using for the VM.
+        self.__datastore_server = "10.0.0.10"
 
         if self.__datastore_port not in CONNECTION_POOL:
             try:
