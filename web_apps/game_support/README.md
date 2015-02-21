@@ -25,7 +25,7 @@ Installation
 --------------------
 Once those applications are installed, open a new Terminal window.
 
-cd into the devops directory (where this README file lives), and run
+cd into the 'devops' directory, and run
 
     librarian-chef install
 
@@ -39,3 +39,18 @@ automatically. Once that is complete, run the following.
 
 This will start the virtual machine and do the installation of the
 necessary components.
+
+    vagrant ssh
+
+Once you are at the prompt, you can run the tests. First clear the
+example data
+
+    /vagrant/scripts/reset_datastore
+
+Then run the tests
+
+    /var/www/code/test/bin/test_all
+
+The example data can be loaded back up with the command
+
+    /var/www/code/bin/setup_example_data
