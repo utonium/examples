@@ -25,8 +25,10 @@ Installation
 --------------------
 Once those applications are installed, open a new Terminal window.
 
-cd into the 'devops' directory, and run
+From the 'game\_support' directory, do the following to download and
+install the necessary cookbooks for Chef.
 
+    cd devops
     librarian-chef install
 
 The librarian tool takes over the cookbooks directory. So any local
