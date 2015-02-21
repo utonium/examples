@@ -10,7 +10,7 @@ available on the machine where this is being run. They are
     http://vagrant.com
 
 VirtualBox is a virtual machine emulator. Vagrant is a toolset used
-to deploy and manage virtual machine. This has only been tested on
+to deploy and manage virtual machines. This has only been tested on
 OSX (currently Yosemite).
 
 You'll also need the Chef librarian tool. It is used to automate the
