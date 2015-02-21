@@ -26,8 +26,10 @@ import local.stash
 # ---------------------------------------------------------------------------------------------
 TEST_NAME = "test_0011_api"
 
-#SERVER_ADDRESS = "10.0.0.10"
-SERVER_ADDRESS = "localhost:8080"
+SERVER_ADDRESS = "10.0.0.10"
+
+# When testing against the main.dev.wsgi server.
+# SERVER_ADDRESS = "localhost:8080"
 
 # ---------------------------------------------------------------------------------------------
 # Functions
