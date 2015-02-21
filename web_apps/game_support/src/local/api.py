@@ -96,7 +96,7 @@ def modifyUser(request):
     """
     print("LOG: modifying user...")
 
-    if pyramid.security.authenticated_userid(request) is None:
+    if request.authenticated_userid is None:
         print("INFO: Unauthenticated access attempted")
         response = dict() 
         response['error'] = True
@@ -152,7 +152,7 @@ def createBattleLog(request):
     """
     print("LOG: creating battle log...")
 
-    if pyramid.security.authenticated_userid(request) is None:
+    if request.authenticated_userid is None:
         print("INFO: Unauthenticated access attempted")
         response = dict() 
         response['error'] = True
@@ -210,7 +210,7 @@ def listUsers(request):
     """
     print("LOG: Getting list of users...")
 
-    if pyramid.security.authenticated_userid(request) is None:
+    if request.authenticated_userid is None:
         return pyramid.httpexceptions.HTTPUnauthorized()
 
     users_stash = local.stash.UsersStash()
