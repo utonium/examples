@@ -32,15 +32,17 @@ install the necessary cookbooks for Chef.
     librarian-chef install
 
 The librarian tool takes over the cookbooks directory. So any local
-cookbooks must be place into 'site\_cookbooks'.
+cookbooks must be placed into 'site\_cookbooks'.
 
 That will download the various Chef cookbooks and their dependencies
-automatically. Once that is complete, run the following.
+automatically. Once that is complete, run the following:
 
     vagrant up 
 
 This will start the virtual machine and do the installation of the
 necessary components.
+
+Next, log into the virtual machine.
 
     vagrant ssh
 
@@ -56,3 +58,8 @@ Then run the tests
 The example data can be loaded back up with the command
 
     /var/www/code/bin/setup_example_data
+
+The website can be visted on the host OS at the URL https://10.0.0.10. It is a self-signed server
+certificate, so the web browser will require a few clicks to accept that. And it won't trust the
+HTTPS connection, but it will still be HTTPS.
+
